@@ -1,41 +1,56 @@
-local function AABB(a,b)
-	local size = 16
-	return a.x < b.x+size and
-		   a.x+size > b.x and
-		   a.y < b.y+size and
-		   a.y+size > b.y
-  end
+local function AABB(a,b,tileSize)
+	return a.x < b.x+tileSize and
+		   a.x+tileSize > b.x and
+		   a.y < b.y+tileSize and
+		   a.y+tileSize > b.y
+end
+
+local function respawn(pos,tileSize)
+	local newX = math.random(-4,4)
+	if pos.x+newX*tileSize >= 480 and pos.x+newX*tileSize <= 544 then
+		pos.x = pos.x + newX * tileSize
+	end
+	return pos.y + 240
+end
 
 function init(self)
 	self.vel = vmath.vector3()
 	self.vel.y = -100
-	tileSize = 16
+	self.tileSize = 16
+
 end
 
 function update(self, dt)
+	self.vel.y = -go.get("/Player#player", "Speed")
 	local player = go.get_world_position("/Player")
 	local pos = go.get_position() 
 	if go.get("/Player#player", "Alive") then
 		pos = pos + self.vel * dt
-		if pos.y < 250 then
-			local p = go.get_position()
-			local newX = math.random(-4,4)
-			if p.x+newX*tileSize >= 480 and p.x+newX*tileSize <= 544 then
-				p.x = p.x + newX * tileSize
-			end
-			p.y = p.y + 250
-			local component = "/EnemyFactory#factory"
-			factory.create(component, p)
-			go.delete()
+		if pos.y < 240 then
+			pos.y = respawn(pos,self.tileSize)
 		end
-
-		if AABB(player,pos) then
-			go.set("/Player#player", "Alive", false)
-			print("hej")
+		if AABB(player,pos,self.tileSize) then
+			if go.get_id() == go.get_id("/PowerUp") then
+				pos.y = respawn(pos,self.tileSize)
+				local speed = 0
+				if go.get("/Player#player", "PowerUp") == true then
+					speed = 10
+				else
+					speed = -10
+				end
+				go.set("/Player#player", "Speed", go.get("/Player#player", "Speed")+speed)
+				if math.random(0,1) == 1 then
+					go.set("/Player#player", "PowerUp", not(go.get("/Player#player", "PowerUp")))
+					
+					go.set_rotation(go.get_rotation()*vmath.quat(0,0,1,0))
+				end
+			else
+				go.set("/Player#player", "Alive", false)	
+			end
 		end
 	else
 		if pos.y < 500 then
-			pos.y = pos.y + 250
+			pos.y = pos.y + 240
 		end
 	end
 	go.set_position(pos)
