@@ -1,0 +1,42 @@
+local function AABB(a,b)
+	local size = 16
+	return a.x < b.x+size and
+		   a.x+size > b.x and
+		   a.y < b.y+size and
+		   a.y+size > b.y
+  end
+
+function init(self)
+	self.vel = vmath.vector3()
+	self.vel.y = -100
+	tileSize = 16
+end
+
+function update(self, dt)
+	local player = go.get_world_position("/Player")
+	local pos = go.get_position() 
+	if go.get("/Player#player", "Alive") then
+		pos = pos + self.vel * dt
+		if pos.y < 250 then
+			local p = go.get_position()
+			local newX = math.random(-4,4)
+			if p.x+newX*tileSize >= 480 and p.x+newX*tileSize <= 544 then
+				p.x = p.x + newX * tileSize
+			end
+			p.y = p.y + 250
+			local component = "/EnemyFactory#factory"
+			factory.create(component, p)
+			go.delete()
+		end
+
+		if AABB(player,pos) then
+			go.set("/Player#player", "Alive", false)
+			print("hej")
+		end
+	else
+		if pos.y < 500 then
+			pos.y = pos.y + 250
+		end
+	end
+	go.set_position(pos)
+end

@@ -1,0 +1,55 @@
+function init(self)
+	msg.post("@render:", "clear_color", { color = vmath.vector4(0, 0, 0, 0) } )
+	msg.post("@render:", "use_fixed_projection", { zoom = 4, near = -1, far = 1 })
+	msg.post(".", "acquire_input_focus")
+	self.vel = vmath.vector3()
+	tileSize = 16
+	startpos = go.get_position()
+	go.property("Alive", true)
+end
+
+function final(self)
+	msg.post(".", "release_input_focus")
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	pos = pos + self.vel
+	if pos.x >= startpos.x-tileSize*2 and pos.x <= startpos.x+tileSize*2 then
+		go.set_position(pos)
+	end
+	self.vel.y = 0
+	self.vel.x = 0
+
+	if go.get("#player", "Alive") == false then
+		print("NOOOOOOOOOOOOOO")
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	-- Add message-handling code here
+	-- Learn more: https://defold.com/manuals/message-passing/
+	-- Remove this function if not needed
+end
+
+function on_input(self, action_id, action)
+	if go.get("#player", "Alive") then
+		if action_id == hash("up") and action.pressed then
+			self.vel.y = tileSize
+		elseif action_id == hash("down") and action.pressed then
+			self.vel.y = -tileSize
+		elseif action_id == hash("left") and action.pressed then
+			self.vel.x = -tileSize
+		elseif action_id == hash("right") and action.pressed then
+			self.vel.x = tileSize
+		end
+	elseif action_id == hash("r") and action.pressed then
+		go.set("#player", "Alive", true)
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Learn more: https://defold.com/manuals/hot-reload/
+	-- Remove this function if not needed
+end
