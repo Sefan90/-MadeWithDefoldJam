@@ -27,9 +27,9 @@ embedded_components {
     z: 0.0
   }
   rotation {
-    x: 1.0
+    x: 0.0
     y: 0.0
     z: 0.0
-    w: 6.123234E-17
+    w: 1.0
   }
 }
