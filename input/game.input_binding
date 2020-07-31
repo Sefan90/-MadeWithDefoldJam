@@ -34,6 +34,14 @@ key_trigger {
   input: KEY_R
   action: "r"
 }
+key_trigger {
+  input: KEY_ESC
+  action: "esc"
+}
+key_trigger {
+  input: KEY_SPACE
+  action: "r"
+}
 mouse_trigger {
   input: MOUSE_BUTTON_LEFT
   action: "touch"

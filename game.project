@@ -1,5 +1,5 @@
 [project]
-title = #MadeWithDefoldJam
+title = Ship go brrr
 
 [bootstrap]
 main_collection = /main/main.collectionc
@@ -16,7 +16,7 @@ height = 768
 shared_state = 1
 
 [windows]
-app_icon = /assets/app_icons/appicon.ico
+app_icon = /assets/app_icons/new.ico
 
 [osx]
 app_icon = /assets/app_icons/appicon.icns
